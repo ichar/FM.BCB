@@ -13,7 +13,7 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
     : TForm(Owner)
 {
     const char *Msg = "Simple RichText Editor";
-	SendMessage(Handle, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)Msg);
+    SendMessage(Handle, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)Msg);
 
     width = this->Width;
     height = this->Height;
@@ -25,17 +25,17 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
     reFileContent->Clear();
 
     TMenuItem *pmLeft = new TMenuItem(MainForm->PopupMenu);
-    pmLeft->Caption = "Âëåâî";
+    pmLeft->Caption = "Ã‚Ã«Ã¥Ã¢Ã®";
     pmLeft->OnClick = &this->pmAlignLeftClick;
     pmAlign->Insert(0,pmLeft);
 
     TMenuItem *pmRight = new TMenuItem(MainForm->PopupMenu);
-    pmRight->Caption = "Âïðàâî";
+    pmRight->Caption = "Ã‚Ã¯Ã°Ã Ã¢Ã®";
     pmRight->OnClick = &this->pmAlignRightClick;
     pmAlign->Insert(1,pmRight);
 
     TMenuItem *pmCenter = new TMenuItem(MainForm->PopupMenu);
-    pmCenter->Caption = "Ïî öåíòðó";
+    pmCenter->Caption = "ÃÃ® Ã¶Ã¥Ã­Ã²Ã°Ã³";
     pmCenter->OnClick = &this->pmAlignCenterClick;
     pmAlign->Insert(2,pmCenter);
 }
@@ -181,8 +181,8 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
     TSearchTypes options;
     TReplaceDialog *dlg = (TReplaceDialog *)Sender;
 
-    /* åñëè áûëî âûäåëåíèå, òî ïîèñê èäåò íà÷èíàÿ ñ åãî ïîñëåäíåãî ñèìâîëà,
-       èíà÷å - ñ ïîçèöèè êóðñîðà */
+    /* Ã¥Ã±Ã«Ã¨ Ã¡Ã»Ã«Ã® Ã¢Ã»Ã¤Ã¥Ã«Ã¥Ã­Ã¨Ã¥, Ã²Ã® Ã¯Ã®Ã¨Ã±Ãª Ã¨Ã¤Ã¥Ã² Ã­Ã Ã·Ã¨Ã­Ã Ã¿ Ã± Ã¥Ã£Ã® Ã¯Ã®Ã±Ã«Ã¥Ã¤Ã­Ã¥Ã£Ã® Ã±Ã¨Ã¬Ã¢Ã®Ã«Ã ,
+       Ã¨Ã­Ã Ã·Ã¥ - Ã± Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¨ ÃªÃ³Ã°Ã±Ã®Ã°Ã  */
     pos_from = reFileContent->SelStart;
     if (dlg->Options.Contains(frDown))
     {
@@ -195,13 +195,13 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
         pos_to = 0;
     }
 
-    /* ïîèñê öåëîãî ñëîâà èëè íåò */
+    /* Ã¯Ã®Ã¨Ã±Ãª Ã¶Ã¥Ã«Ã®Ã£Ã® Ã±Ã«Ã®Ã¢Ã  Ã¨Ã«Ã¨ Ã­Ã¥Ã² */
     if (dlg->Options.Contains(frWholeWord))
         options << stWholeWord;
     else
         options >> stWholeWord;
 
-    /* ïîèñê ñ ó÷åòîì èëè áåç ó÷åòà ðåãèñòðà */
+    /* Ã¯Ã®Ã¨Ã±Ãª Ã± Ã³Ã·Ã¥Ã²Ã®Ã¬ Ã¨Ã«Ã¨ Ã¡Ã¥Ã§ Ã³Ã·Ã¥Ã²Ã  Ã°Ã¥Ã£Ã¨Ã±Ã²Ã°Ã  */
     if (dlg->Options.Contains(frMatchCase))
         options << stMatchCase;
     else
@@ -209,7 +209,7 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
 
     pos_at = reFileContent->FindText(dlg->FindText, pos_from, pos_to, options);
 
-    if (pos_at != -1) // åñëè íàéäåíî
+    if (pos_at != -1) // Ã¥Ã±Ã«Ã¨ Ã­Ã Ã©Ã¤Ã¥Ã­Ã®
     {
         reFileContent->SelStart = pos_at;
         reFileContent->SelLength = dlg->FindText.Length();
@@ -217,7 +217,7 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
             dlgReplaceReplace(Sender);
     }
     else
-        ShowMessage("Òåêñò '" + dlg->FindText + "' íå íàéäåí");
+        ShowMessage("Ã’Ã¥ÃªÃ±Ã² '" + dlg->FindText + "' Ã­Ã¥ Ã­Ã Ã©Ã¤Ã¥Ã­");
 
     reFileContent->Perform(EM_SCROLLCARET,0,0);
     reFileContent->SetFocus();
@@ -234,7 +234,7 @@ void __fastcall TMainForm::dlgReplaceReplace(TObject *Sender)
     }
     else if (dlgReplace->Options.Contains(frReplace))
     {
-        ShowMessage("Òåêñò '" + dlgReplace->FindText + "' íå íàéäåí");
+        ShowMessage("Ã’Ã¥ÃªÃ±Ã² '" + dlgReplace->FindText + "' Ã­Ã¥ Ã­Ã Ã©Ã¤Ã¥Ã­");
         return;
     }
     if (dlgReplace->Options.Contains(frReplaceAll))
