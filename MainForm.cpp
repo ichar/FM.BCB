@@ -1,12 +1,17 @@
-//---------------------------------------------------------------------------
-
 #include <vcl.h>
+//---------------------------------------------------------------------------
 #pragma hdrstop
+
 #include "MainForm.h"
 #include "utils.h"
-//---------------------------------------------------------------------------
+
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+
+#define DEBUG 0
+//---------------------------------------------------------------------------
+char* LOCALE_NAME = "locale.txt";
+
 TMainForm *MainForm;
 //---------------------------------------------------------------------------
 __fastcall TMainForm::TMainForm(TComponent* Owner)
@@ -18,6 +23,17 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
     width = this->Width;
     height = this->Height;
 
+    int code = loadLocale(LOCALE_NAME);
+    if (code != 0)
+    {
+        ShowMessage("Locale not found! Exit: " + IntToStr(code));
+    }
+
+#if DEBUG == 1
+    string body = get_filebody(LOCALE_NAME);
+    ShowMessage(body.c_str());
+#endif
+
     gbFileContent->Width = width - 36;
     pnlFileContent->Width = width - 70;
     reFileContent->Width = width - 90;
@@ -25,17 +41,17 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
     reFileContent->Clear();
 
     TMenuItem *pmLeft = new TMenuItem(MainForm->PopupMenu);
-    pmLeft->Caption = "Âëåâî";
+    pmLeft->Caption = loc["Left"];
     pmLeft->OnClick = &this->pmAlignLeftClick;
     pmAlign->Insert(0,pmLeft);
 
     TMenuItem *pmRight = new TMenuItem(MainForm->PopupMenu);
-    pmRight->Caption = "Âïðàâî";
+    pmRight->Caption = loc["Right"];
     pmRight->OnClick = &this->pmAlignRightClick;
     pmAlign->Insert(1,pmRight);
 
     TMenuItem *pmCenter = new TMenuItem(MainForm->PopupMenu);
-    pmCenter->Caption = "Ïî öåíòðó";
+    pmCenter->Caption = loc["Center"];
     pmCenter->OnClick = &this->pmAlignCenterClick;
     pmAlign->Insert(2,pmCenter);
 }
@@ -43,6 +59,39 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 void __fastcall TMainForm::MenuFileExitItemClick(TObject *Sender)
 {
     exit(0);
+}
+//---------------------------------------------------------------------------
+int TMainForm::loadLocale(char* file)
+{
+    FILE *fp;
+    TStringList* lst = new TStringList();
+    char str[80];
+
+    if ((fp = fopen(file, "rb")) == NULL)
+    {
+        return -1;
+    }
+
+    while(!feof(fp))
+    {
+        fgets(str, 79, fp);
+        lst->Clear();
+        split(lst, str, ":");
+
+        if (lst->Count == 2)
+        {
+            loc.insert(stmap::value_type(
+                lst->Strings[0].c_str(),
+                lst->Strings[1]
+            ));
+        }
+    }
+
+    delete lst;
+    lst = NULL;
+
+    fclose(fp);
+    return 0;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::MenuFileOpenItemClick(TObject *Sender)
@@ -60,6 +109,7 @@ void __fastcall TMainForm::FormResize(TObject *Sender)
 {
     int w = this->Width - width;
     int h = this->Height - height;
+
     bool isWidthOverflow = false, isHeightOverflow = false;
 
     if (this->Width >= MIN_WIDTH) {
@@ -92,7 +142,7 @@ void __fastcall TMainForm::FormResize(TObject *Sender)
     else
         height = this->Height;
 
-    std::string outs = format(
+    string outs = format(
         " = Width: %s[%s,%i] *** Height: %s[%s,%i] = ",
         IntToStr(width),
         IntToStr(w),
@@ -181,8 +231,6 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
     TSearchTypes options;
     TReplaceDialog *dlg = (TReplaceDialog *)Sender;
 
-    /* åñëè áûëî âûäåëåíèå, òî ïîèñê èäåò íà÷èíàÿ ñ åãî ïîñëåäíåãî ñèìâîëà,
-       èíà÷å - ñ ïîçèöèè êóðñîðà */
     pos_from = reFileContent->SelStart;
     if (dlg->Options.Contains(frDown))
     {
@@ -195,13 +243,11 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
         pos_to = 0;
     }
 
-    /* ïîèñê öåëîãî ñëîâà èëè íåò */
     if (dlg->Options.Contains(frWholeWord))
         options << stWholeWord;
     else
         options >> stWholeWord;
 
-    /* ïîèñê ñ ó÷åòîì èëè áåç ó÷åòà ðåãèñòðà */
     if (dlg->Options.Contains(frMatchCase))
         options << stMatchCase;
     else
@@ -209,7 +255,7 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
 
     pos_at = reFileContent->FindText(dlg->FindText, pos_from, pos_to, options);
 
-    if (pos_at != -1) // åñëè íàéäåíî
+    if (pos_at != -1)
     {
         reFileContent->SelStart = pos_at;
         reFileContent->SelLength = dlg->FindText.Length();
@@ -217,7 +263,10 @@ void __fastcall TMainForm::dlgFindFind(TObject *Sender)
             dlgReplaceReplace(Sender);
     }
     else
-        ShowMessage("Òåêñò '" + dlg->FindText + "' íå íàéäåí");
+        ShowMessage(AnsiString(format(
+            loc["Text not found"].c_str(),
+            dlg->FindText
+        ).c_str()));
 
     reFileContent->Perform(EM_SCROLLCARET,0,0);
     reFileContent->SetFocus();
@@ -234,7 +283,10 @@ void __fastcall TMainForm::dlgReplaceReplace(TObject *Sender)
     }
     else if (dlgReplace->Options.Contains(frReplace))
     {
-        ShowMessage("Òåêñò '" + dlgReplace->FindText + "' íå íàéäåí");
+        ShowMessage(AnsiString(format(
+            loc["Text not found"].c_str(),
+            dlgReplace->FindText
+        ).c_str()));
         return;
     }
     if (dlgReplace->Options.Contains(frReplaceAll))

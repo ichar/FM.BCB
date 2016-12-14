@@ -1,8 +1,7 @@
 //---------------------------------------------------------------------------
+#ifndef FM_MAIN_H
+#define FM_MAIN_H
 
-#ifndef FMH
-#define FMH
-//---------------------------------------------------------------------------
 #include <Classes.hpp>
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
@@ -12,7 +11,11 @@
 #include <ExtCtrls.hpp>
 #include <ComCtrls.hpp>
 #include <ImgList.hpp>
+#pragma hdrstop
+
+#include "utils.h"
 //---------------------------------------------------------------------------
+
 class TMainForm : public TForm
 {
 static const int MIN_WIDTH = 500;
@@ -115,8 +118,10 @@ __published:	// IDE-managed Components
 private:	// User declarations
         AnsiString filename;
         int width, height;
+        stmap loc;
 public:		// User declarations
         __fastcall TMainForm(TComponent* Owner);
+        loadLocale(char* file);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMainForm *MainForm;

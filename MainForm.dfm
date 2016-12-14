@@ -1,6 +1,6 @@
 object MainForm: TMainForm
-  Left = 204
-  Top = 185
+  Left = 144
+  Top = 211
   Width = 718
   Height = 380
   BorderWidth = 10

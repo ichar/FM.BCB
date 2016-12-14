@@ -1,0 +1,4 @@
+Left		: Влево
+Right		: Вправо
+Center		: По центру
+Text not found	: Текст "%s" не найден!

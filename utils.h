@@ -1,12 +1,22 @@
 //---------------------------------------------------------------------------
-
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <string>
 #include <cstdio>
 #include <cstdarg>
-
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <ostream>
+#include <sstream>
+#include <map>
 //---------------------------------------------------------------------------
-std::string format(const char* fmt, ...);
+using namespace std;
+typedef map<string, AnsiString, less<string>, allocator<string> > stmap;
+//---------------------------------------------------------------------------
+
+void split(TStringList*, char*, const char*);
+string format(const char*, ...);
+string get_filebody(char*);
+
 #endif
