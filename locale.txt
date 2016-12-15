@@ -1,4 +1,6 @@
-Left		: Влево
-Right		: Вправо
-Center		: По центру
-Text not found	: Текст "%s" не найден!
+Left		 : Влево
+Right		 : Вправо
+Center		 : По центру
+Text not found	 : Текст "%s" не найден!
+File was changed : ВНИМАНИЕ! Формат файла может быть изменен к типу RTF.
+Save		 : Сохранить?

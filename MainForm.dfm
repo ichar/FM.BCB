@@ -1,6 +1,6 @@
 object MainForm: TMainForm
-  Left = 144
-  Top = 211
+  Left = 437
+  Top = 106
   Width = 718
   Height = 380
   BorderWidth = 10
@@ -120,9 +120,13 @@ object MainForm: TMainForm
         Lines.Strings = (
           'reFileContent')
         ParentCtl3D = False
+        ParentShowHint = False
         PopupMenu = PopupMenu
         ScrollBars = ssVertical
+        ShowHint = True
         TabOrder = 0
+        OnKeyUp = reFileContentKeyUp
+        OnMouseMove = reFileContentMouseMove
       end
     end
   end

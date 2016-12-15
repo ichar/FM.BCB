@@ -10,6 +10,7 @@
 #include <ostream>
 #include <sstream>
 #include <map>
+#include <sys/stat.h>
 //---------------------------------------------------------------------------
 using namespace std;
 typedef map<string, AnsiString, less<string>, allocator<string> > stmap;

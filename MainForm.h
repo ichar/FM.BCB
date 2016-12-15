@@ -115,13 +115,19 @@ __published:	// IDE-managed Components
         void __fastcall dlgFindFind(TObject *Sender);
         void __fastcall dlgReplaceReplace(TObject *Sender);
 
+        void __fastcall reFileContentMouseMove(TObject *Sender,
+                        TShiftState Shift, int X, int Y);
+        void __fastcall reFileContentKeyUp(TObject *Sender, WORD &Key,
+                        TShiftState Shift);
+
 private:	// User declarations
         AnsiString filename;
         int width, height;
         stmap loc;
+        void __fastcall showFormProperties(string outs);
+        int __fastcall loadLocale(char* file);
 public:		// User declarations
         __fastcall TMainForm(TComponent* Owner);
-        loadLocale(char* file);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMainForm *MainForm;

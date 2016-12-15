@@ -61,7 +61,14 @@ void __fastcall TMainForm::MenuFileExitItemClick(TObject *Sender)
     exit(0);
 }
 //---------------------------------------------------------------------------
-int TMainForm::loadLocale(char* file)
+void __fastcall TMainForm::showFormProperties(string outs)
+{
+    edFormProps->Text = outs.c_str();
+}
+//---------------------------------------------------------------------------
+//  Load Cyrillic Localizer map
+
+int __fastcall TMainForm::loadLocale(char* file)
 {
     FILE *fp;
     TStringList* lst = new TStringList();
@@ -99,6 +106,15 @@ void __fastcall TMainForm::MenuFileOpenItemClick(TObject *Sender)
     if (dlgMainOpen->Execute())
     {
         filename = dlgMainOpen->FileName;
+
+        struct stat stFile;
+        if(stat(filename.c_str(), &stFile) == 0)
+        {
+            showFormProperties(format(" = FileSize: %s = ",
+                IntToStr(stFile.st_size)
+            ));
+        }
+
         reFileContent->Lines->LoadFromFile(filename);
         reFileContent->Modified = false;
         edFileName->Text = filename;
@@ -142,22 +158,30 @@ void __fastcall TMainForm::FormResize(TObject *Sender)
     else
         height = this->Height;
 
-    string outs = format(
-        " = Width: %s[%s,%i] *** Height: %s[%s,%i] = ",
+    showFormProperties(format(" = Width: %s[%s,%i] *** Height: %s[%s,%i] = ",
         IntToStr(width),
         IntToStr(w),
         isWidthOverflow ? 1 : 0,
         IntToStr(height),
         IntToStr(h),
         isHeightOverflow ? 1 : 0
-    );
-    edFormProps->Text = outs.c_str();
+    ));
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::MenuFileSaveItemClick(TObject *Sender)
 {
-    if (filename.Length() == 0)
+    if (filename.Length() == 0 || !reFileContent->Modified)
         return;
+
+    switch (Application->MessageBox(
+        loc["File was changed"].c_str(),
+        loc["Save"].c_str(),
+        MB_YESNOCANCEL+MB_ICONQUESTION))
+    {
+        case IDCANCEL:
+            return;
+    }
+
     reFileContent->Lines->SaveToFile(filename);
     reFileContent->Modified = false;
 }
@@ -296,6 +320,27 @@ void __fastcall TMainForm::dlgReplaceReplace(TObject *Sender)
 void __fastcall TMainForm::MenuEditUndoItemClick(TObject *Sender)
 {
     reFileContent->Undo();
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainForm::reFileContentMouseMove(TObject *Sender,
+      TShiftState Shift, int X, int Y)
+{
+    showFormProperties(format(" = Mouse X: %s *** Y: %s = ",
+        IntToStr(X),
+        IntToStr(Y)
+    ));
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::reFileContentKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+    showFormProperties(format(" = KeyPress: %s *** Lines/Caret: %s[%s:%s] = ",
+        IntToStr(Key),
+        IntToStr(reFileContent->Lines->Count),
+        IntToStr(reFileContent->CaretPos.y+1),
+        IntToStr(reFileContent->CaretPos.x+1)
+    ));
 }
 //---------------------------------------------------------------------------
 
